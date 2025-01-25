@@ -18,10 +18,10 @@ final _appointmentsRef = FirebaseFirestore.instance.collection("Appointments").w
   toFirestore: (appointment, _) => appointment.toJson(),
 );
 Stream<QuerySnapshot>? _summaryStream;
-const TextStyle _cardHeaderStyle = TextStyle(
+const TextStyle _textHeaderStyle = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 20,
-  );
+);
 
 class _RepairPageState extends State<RepairPage> {
   @override
@@ -54,11 +54,11 @@ class _RepairPageState extends State<RepairPage> {
 
   Widget _buildUI() {
     return Container(
-      child: _summaryInfo(),
+      child: _summaryPage(),
     );
   }
 
-  Widget _summaryInfo() {
+  Widget _summaryPage() {
     // Use a StreamBuilder instead of a FutureBuilder to listen to changes in Firestore
     return StreamBuilder(
       stream: _summaryStream,
@@ -77,8 +77,7 @@ class _RepairPageState extends State<RepairPage> {
         Summary summary = Summary.fromJson(snapshot.data!.docs[0].data()! as Map<String, dynamic>);
         return Column(
           children: [
-            _summaryScroller(summary),
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.3),
+            _summaryInfo(summary),
             _progressBar(context, summary.progress),
           ],
         );
@@ -86,102 +85,95 @@ class _RepairPageState extends State<RepairPage> {
     );
   }
 
-  Widget _summaryScroller(Summary summary) {
+  Widget _summaryInfo(Summary summary) {
     return SizedBox(
-      height: MediaQuery.sizeOf(context).height * 0.3,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          SizedBox(width: MediaQuery.sizeOf(context).width * 0.15),
-          _timeCard(summary.completionTime),
-          SizedBox(width: MediaQuery.sizeOf(context).width * 0.15),
-          _costCard(summary.cost),
-          SizedBox(width: MediaQuery.sizeOf(context).width * 0.15),
-          _changesCard(summary.changes),
-          SizedBox(width: MediaQuery.sizeOf(context).width * 0.15),
-          _partsCard(summary.parts),
-          SizedBox(width: MediaQuery.sizeOf(context).width * 0.15),
-        ],
-      ),
-    );
-  }
-
-  Widget _timeCard(Timestamp time) {
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width * 0.7,
-      child: Card(
-        child: ListTile(
-          leading: const Icon(
-            Icons.schedule,
-            size: 40,
-          ),
-          title: const Text(
-            "Completion Time",
-            style: _cardHeaderStyle,
-          ),
-          subtitle: Text(DateFormat("MM/dd/yy h:mm a").format(time.toDate()).toString()),
+      height: MediaQuery.sizeOf(context).height * 0.7,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _timeSection(summary.completionTime),
+            _tileDivider(),
+            _costSection(summary.cost),
+            _tileDivider(),
+            _changesSection(summary.changes),
+            _tileDivider(),
+            _partsSection(summary.parts),
+          ],
         ),
       ),
     );
   }
 
-  Widget _costCard(int cost) {
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width * 0.7,
-      child: Card(
-        child: ListTile(
-          leading: const Icon(
-            Icons.attach_money,
-            size: 45,
-          ),
-          title: const Text(
-            "Cost",
-            style: _cardHeaderStyle,
-          ),
-          subtitle: Text(cost.toString()),
-        ),
-      ),
+  Widget _tileDivider() {
+    return const Divider(
+      height: 5,
     );
   }
 
-  Widget _changesCard(String changes) {
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width * 0.7,
-      child: Card(
-        child: ListTile(
-          leading: const Icon(
-            Icons.build_circle_outlined,
-            size: 45,
-          ),
-          title: const Text(
-            "Changes",
-            style: _cardHeaderStyle,
-          ),
-          subtitle: Text(changes),
-        ),
+  Widget _timeSection(Timestamp time) {
+    return ListTile(
+      leading: const Icon(
+        Icons.schedule,
+        size: 35,
+        color: Colors.black,
       ),
+      title: const Text(
+        "Completion Time",
+        style: _textHeaderStyle,
+      ),
+      subtitle: Text(DateFormat("MM/dd/yy h:mm a").format(time.toDate()).toString()),
+      tileColor: Theme.of(context).secondaryHeaderColor,
     );
   }
 
-  Widget _partsCard(List<String> parts) {
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width * 0.7,
-      child: Card(
-        child: ListTile(
-          leading: const Icon(
-            Icons.tire_repair_outlined,
-            size: 45,
-          ),
-          title: const Text(
-            "Parts",
-            style: _cardHeaderStyle,
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: parts.map<Text>((part) => Text("🤠 $part")).toList(),
-          ),
-        ),
+  Widget _costSection(int cost) {
+    return ListTile(
+      leading: const Icon(
+        Icons.attach_money,
+        size: 35,
+        color: Colors.black,
       ),
+      title: const Text(
+        "Cost",
+        style: _textHeaderStyle,
+      ),
+      subtitle: Text(cost.toString()),
+      tileColor: Theme.of(context).secondaryHeaderColor,
+    );
+  }
+
+  Widget _changesSection(String changes) {
+    return ListTile(
+      leading: const Icon(
+        Icons.build_circle_outlined,
+        size: 35,
+        color: Colors.black,
+      ),
+      title: const Text(
+        "Changes",
+        style: _textHeaderStyle,
+      ),
+      subtitle: Text(changes),
+      tileColor: Theme.of(context).secondaryHeaderColor,
+    );
+  }
+
+  Widget _partsSection(List<String> parts) {
+    return ListTile(
+      leading: const Icon(
+        Icons.tire_repair_outlined,
+        size: 35,
+        color: Colors.black,
+      ),
+      title: const Text(
+        "Parts",
+        style: _textHeaderStyle,
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: parts.map<Text>((part) => Text("- $part")).toList(),
+      ),
+      tileColor: Theme.of(context).secondaryHeaderColor,
     );
   }
 
