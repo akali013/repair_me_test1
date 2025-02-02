@@ -20,15 +20,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,   // Enable data persistence for cost-efficiency
+    persistenceEnabled: true, // Enable data persistence for cost-efficiency
   );
-  FirebaseAuth.instance.authStateChanges().listen(
-    (User? user) {
-      if (user != null) {
-        _userService.currentUser = user;
-      }
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user != null) {
+      _userService.currentUser = user;
     }
-  );
+  });
 
   runApp(const RepairMeApp());
 }
@@ -48,9 +46,9 @@ class RepairMeApp extends StatelessWidget {
           seedColor: Colors.white,
         ),
         textTheme: Theme.of(context).textTheme.apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
-        ),
+              bodyColor: Colors.white,
+              displayColor: Colors.white,
+            ),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
@@ -77,3 +75,4 @@ class RepairMeApp extends StatelessWidget {
     );
   }
 }
+//this is a test for chris
