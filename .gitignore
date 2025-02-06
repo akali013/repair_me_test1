@@ -42,3 +42,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/gradle/wrapper
+
+# FVM Version Cache
+.fvm/
